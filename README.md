@@ -93,7 +93,7 @@ changed: [localhost]
 
 TASK [Parse and Display the Python Script Output] ******************************  3:14:20 PM
 ok: [localhost] => {
-    "msg": "The script returned: {'changed': True, 'message': 'Python successfully processed data: Hello AT&T Ops Labs', 'status': 'Success'}"
+    "msg": "The script returned: {'changed': True, 'message': 'Python successfully processed data: Hello Ops Labs', 'status': 'Success'}"
 }
 
 PLAY RECAP *********************************************************************
