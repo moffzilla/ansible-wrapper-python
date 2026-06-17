@@ -59,3 +59,27 @@ Use the ansible.builtin.script module. Because we want AAP to execute this insid
       ansible.builtin.debug:
         msg: "The script returned: {{ script_output.stdout | from_json }}"
 ```
+Step 3: Executing in Ansible Automation Platform (AAP)
+To make this active inside AAP, follow these standard workflow steps:
+
+Push to Git: Push both process_data.py and run_script.yml to your Git repository sync'd with AAP.
+
+Sync Project: In the AAP Web UI, go to Projects and sync your repository.
+
+Create a Job Template:
+
+Go to Templates -> Add -> Add job template.
+
+Inventory: Select Demo Inventory (or any inventory containing localhost).
+
+Project: Select the Project you sync'd in step 2.
+
+Playbook: Select run_script.yml from the dropdown.
+
+Execution Environment: Select the standard target Execution Environment (e.g., ee-supported-rhel9 or your custom image containing any specific python pip packages your script imports).
+
+Add an Optional Survey: * Click the Survey tab on the Job Template.
+
+Add a text question with the Answer Variable named user_input. This maps directly to the {{ user_input }} variable in the playbook.
+
+Launch: Click Launch. AAP will spawn an isolated container execution environment, feed your survey input down through the playbook, pass it into the Python execution layer, and print your JSON structured output cleanly inside the job tracking logs.
