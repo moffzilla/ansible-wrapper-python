@@ -37,3 +37,25 @@ def main():
 if __name__ == "__main__":
     main()
 ```
+Step 2: The Ansible Playbook Wrapper (run_script.yml)
+Use the ansible.builtin.script module. Because we want AAP to execute this inside its own environment container, we use hosts: localhost and set gather_facts: false.
+
+```
+---
+- name: Execute Custom Python Script in AAP
+  hosts: localhost
+  gather_facts: false
+  vars:
+    # This variable can be passed dynamically via AAP Survey or Extra Vars
+    user_input: "Default AAP Data"
+
+  tasks:
+    - name: Run local Python script within the Execution Environment
+      ansible.builtin.script:
+        cmd: "process_data.py '{{ user_input }}'"
+      register: script_output
+
+    - name: Parse and Display the Python Script Output
+      ansible.builtin.debug:
+        msg: "The script returned: {{ script_output.stdout | from_json }}"
+```
