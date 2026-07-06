@@ -2,7 +2,23 @@
 - name: Sync and Deploy Squid Configurations via Jump Host
   hosts: localhost
   gather_facts: false
-  
+  vars:
+    # --- Infrastructure Variables ---
+    # The source server where the squid files currently live
+    source_server: "pxy01"
+    
+    # The intermediate/destination server where files are staged and deployed
+    dest_server: "prx02"
+    
+    # --- User & Path Variables ---
+    user_id: "myuser"
+    user_home: "/home/{{ user_id }}"
+    staging_dir: "{{ user_home }}/external"
+    
+    # --- Squid Application Paths ---
+    squid_source_path: "/etc/squid"
+    squid_final_dest: "/etc/squid/groups/external"
+
   tasks:
     # -------------------------------------------------------------------------
     # STEP 1 & 2: Run as the local user to stage files on the destination server
