@@ -1,0 +1,16 @@
+---
+- name: Sync and Deploy Squid Configurations via Jump Host
+  hosts: localhost
+  gather_facts: false
+
+  tasks:
+    - name: Ping all hosts
+      ping:
+      register: ping_result
+      ignore_unreachable: true
+
+    - name: Report unreachable hosts
+      debug:
+        msg: "Host {{ inventory_hostname }} is UNREACHABLE"
+      when: ping_result.unreachable is defined and ping_result.unreachable
+      
