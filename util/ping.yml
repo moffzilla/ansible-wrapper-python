@@ -6,16 +6,16 @@
     - name: Ping target hosts (SSH/WinRM connection test)
       ansible.builtin.ping:
 
-- name: Method 2 - Run actual ICMP IP ping from the Automation Controller
-  hosts: all
-  gather_facts: false
-  tasks:
-    - name: Execute ICMP ping on target hosts
-      ansible.builtin.shell: "ping -c 4 {{ inventory_hostname }}"
-      delegate_to: localhost     # Runs the ping from your Ansible Control Node
-      register: ping_output
-      changed_when: false        # Prevents this task from being flagged as a system change
+#- name: Method 2 - Run actual ICMP IP ping from the Automation Controller, you need this first https://access.redhat.com/solutions/6859851
+#  hosts: all
+#  gather_facts: false
+#  tasks:
+#    - name: Execute ICMP ping on target hosts
+#      ansible.builtin.shell: "ping -c 4 {{ inventory_hostname }}"
+#      delegate_to: localhost     # Runs the ping from your Ansible Control Node
+#      register: ping_output
+#      changed_when: false        # Prevents this task from being flagged as a system change
 
-    - name: Display the ping results
-      ansible.builtin.debug:
-        msg: "{{ ping_output.stdout }}"
+#    - name: Display the ping results
+#      ansible.builtin.debug:
+#        msg: "{{ ping_output.stdout }}"
