@@ -1,0 +1,71 @@
+---
+- name: Sync and Deploy Squid Configurations via Jump Host
+  hosts: localhost
+  gather_facts: false
+  
+  tasks:
+    # -------------------------------------------------------------------------
+    # STEP 1 & 2: Run as the local user to stage files on the destination server
+    # -------------------------------------------------------------------------
+    - name: Stage files on the destination server as unprivileged user
+      delegate_to: localhost
+      remote_user: "{{ user_id }}"
+      block:
+        - name: Ensure staging directory exists on destination server
+          ansible.builtin.file:
+            path: "{{ staging_dir }}"
+            state: directory
+            mode: '0755'
+            owner: "{{ user_id }}"
+          delegate_to: "{{ dest_server }}"
+
+        # This replaces the manual rsync command using Ansible's native synchronization module
+        - name: Sync files from source server to destination staging directory
+          ansible.posix.synchronize:
+            src: "{{ squid_source_path }}/"
+            dest: "{{ staging_dir }}/"
+            archive: yes
+            checksum: yes
+          delegate_to: "{{ source_server }}"
+          vars:
+            ansible_ssh_user: "{{ user_id }}"
+
+    # -------------------------------------------------------------------------
+    # STEP 3 & 4: Elevate to root on the destination server to copy and verify
+    # -------------------------------------------------------------------------
+    - name: Deploy staged files to production paths as root
+      delegate_to: "{{ dest_server }}"
+      become: yes
+      become_user: root
+      remote_user: "{{ user_id }}"
+      block:
+        - name: Ensure final system directory exists
+          ansible.builtin.file:
+            path: "{{ squid_final_dest }}"
+            state: directory
+            mode: '0755'
+            owner: root
+            group: root
+
+        # Replaces the manual 'cp -r' while preserving root ownership requirements
+        - name: Copy staged files to final Squid directory and fix ownership to root
+          ansible.builtin.copy:
+            src: "{{ item }}"
+            dest: "{{ squid_final_dest }}/"
+            remote_src: yes
+            owner: root
+            group: root
+            mode: preserve
+          with_fileglob:
+            - "{{ staging_dir }}/*"
+
+        # Verification step: Captures files and permissions to guarantee parity
+        - name: Verify deployed files match expectations
+          ansible.builtin.find:
+            paths: "{{ squid_final_dest }}"
+            recurse: yes
+          register: deployed_files
+
+        - name: Output deployment summary for verification
+          ansible.builtin.debug:
+            msg: "Successfully verified {{ deployed_files.matched }} elements in {{ squid_final_dest }} with root ownership."
