@@ -1,16 +1,21 @@
 ---
-- name: Sync and Deploy Squid Configurations via Jump Host
+- name: Method 1 - Verify Ansible connectivity to managed hosts
+  hosts: all                     # Targets all hosts in your inventory or specify a group
+  gather_facts: false            # Disables fact gathering to speed up execution
+  tasks:
+    - name: Ping target hosts (SSH/WinRM connection test)
+      ansible.builtin.ping:
+
+- name: Method 2 - Run actual ICMP IP ping from the Automation Controller
   hosts: all
   gather_facts: false
-
   tasks:
-    - name: Ping all hosts
-      ping:
-      register: ping_result
-      ignore_unreachable: true
+    - name: Execute ICMP ping on target hosts
+      ansible.builtin.shell: "ping -c 4 {{ inventory_hostname }}"
+      delegate_to: localhost     # Runs the ping from your Ansible Control Node
+      register: ping_output
+      changed_when: false        # Prevents this task from being flagged as a system change
 
-    - name: Report unreachable hosts
-      debug:
-        msg: "Host {{ inventory_hostname }} is UNREACHABLE"
-      when: ping_result.unreachable is defined and ping_result.unreachable
-      
+    - name: Display the ping results
+      ansible.builtin.debug:
+        msg: "{{ ping_output.stdout }}"
