@@ -1,6 +1,6 @@
 ---
 - name: Sync and Deploy Squid Configurations via Jump Host
-  hosts: localhost
+#  hosts: localhost
   gather_facts: false
 
   tasks:
