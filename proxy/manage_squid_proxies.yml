@@ -1,0 +1,75 @@
+---
+- name: Combined Squid Proxy Configuration (Internet & Internal)
+  hosts: all
+#  become: true
+  vars:
+    # Default values - meant to be overridden by AAP Survey
+    traffic_type: "internet"   # Options: 'internet' or 'internal'
+    target_domain: "abc123.com"
+    target_prefix: "abc123"
+
+    # Configuration map that dynamically switches paths and markers based on traffic_type
+    proxy_config_map:
+      internet:
+        squid_marker: '^#ALLOWED INTERNET WEBSITES ACL'
+        acl_main_file: '/etc/squid/access-lists/access-lists.conf'
+        groups_dir: '/etc/squid/groups/external'
+      internal:
+        squid_marker: '^#ALLOWED INTERNAL ATT WEBSITES'
+        acl_main_file: '/etc/squid/access-lists/access-lists-internal.conf'
+        groups_dir: '/etc/squid/groups/internal/intranet'
+
+  tasks:
+    # -------------------------------------------------------------------------
+    # TASK 1: Modify squid.conf
+    # -------------------------------------------------------------------------
+    - name: Task 1 - Add new URL ACL under the selected allowed section
+      ansible.builtin.lineinfile:
+        path: /etc/squid/squid.conf
+        line: "acl allow_dst dstdomain .{{ target_domain }}"
+        insertafter: "{{ proxy_config_map[traffic_type].squid_marker }}"
+        state: present
+      notify: Reload Squid Service
+
+    # -------------------------------------------------------------------------
+    # TASK 2: Update access-lists
+    # -------------------------------------------------------------------------
+    - name: Task 2 - Append include line to target access-lists configuration file
+      ansible.builtin.lineinfile:
+        path: "{{ proxy_config_map[traffic_type].acl_main_file }}"
+        line: "include /etc/squid/access-lists/{{ target_domain }}"
+        state: present
+      notify: Reload Squid Service
+
+    - name: Task 2 - Create the new destination configuration file
+      ansible.builtin.file:
+        path: "/etc/squid/access-lists/{{ target_prefix }}.conf"
+        state: touch
+        mode: '0644'
+        owner: root
+        group: root
+
+    # -------------------------------------------------------------------------
+    # TASK 3: Update groups files (Dynamic Path Assignment)
+    # -------------------------------------------------------------------------
+    - name: Task 3 - Create domain file for new destination
+      ansible.builtin.file:
+        path: "{{ proxy_config_map[traffic_type].groups_dir }}/{{ target_prefix }}.domain"
+        state: touch
+        mode: '0644'
+        owner: root
+        group: root
+
+    - name: Task 3 - Create IP file for new destination
+      ansible.builtin.file:
+        path: "{{ proxy_config_map[traffic_type].groups_dir }}/{{ target_prefix }}.ip"
+        state: touch
+        mode: '0644'
+        owner: root
+        group: root
+
+  handlers:
+    - name: Reload Squid Service
+      ansible.builtin.service:
+        name: squid
+        state: reloaded
