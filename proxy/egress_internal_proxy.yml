@@ -1,0 +1,63 @@
+---
+- name: Configure Egress Squid Proxies for Internal Destination
+  hosts: egress_proxies
+#  become: true
+  vars:
+    # Parameterized to allow easy reuse via AAP Surveys or Extra Vars
+    target_domain: "xyz456.com"
+    target_prefix: "xyz456"
+
+  tasks:
+    # -------------------------------------------------------------------------
+    # TASK 1: Modify squid.conf
+    # -------------------------------------------------------------------------
+    - name: Task 1 - Add new URL ACL under allowed internal websites
+      ansible.builtin.lineinfile:
+        path: /etc/squid/squid.conf
+        line: "acl allow_dst dstdomain .{{ target_domain }}"
+        insertafter: '^#ALLOWED INTERNAL ATT WEBSITES'
+        state: present
+      notify: Reload Squid Service
+
+    # -------------------------------------------------------------------------
+    # TASK 2: Update access-lists
+    # -------------------------------------------------------------------------
+    - name: Task 2 - Append include line to access-lists-internal.conf
+      ansible.builtin.lineinfile:
+        path: /etc/squid/access-lists/access-lists-internal.conf
+        line: "include /etc/squid/access-lists/{{ target_domain }}"
+        state: present
+      notify: Reload Squid Service
+
+    - name: Task 2 - Create the new configuration file for the destination
+      ansible.builtin.file:
+        path: "/etc/squid/access-lists/{{ target_prefix }}.conf"
+        state: touch
+        mode: '0644'
+        owner: root
+        group: root
+
+    # -------------------------------------------------------------------------
+    # TASK 3: Update groups/internal/intranet
+    # -------------------------------------------------------------------------
+    - name: Task 3 - Create domain file for new internal destination
+      ansible.builtin.file:
+        path: "/etc/squid/groups/internal/intranet/{{ target_prefix }}.domain"
+        state: touch
+        mode: '0644'
+        owner: root
+        group: root
+
+    - name: Task 3 - Create IP file for new internal destination
+      ansible.builtin.file:
+        path: "/etc/squid/groups/internal/intranet/{{ target_prefix }}.ip"
+        state: touch
+        mode: '0644'
+        owner: root
+        group: root
+
+  handlers:
+    - name: Reload Squid Service
+      ansible.builtin.service:
+        name: squid
+        state: reloaded
