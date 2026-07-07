@@ -1,6 +1,6 @@
 ---
 - name: Configure Egress Squid Proxies for Internal Destination
-  hosts: egress_proxies
+  hosts: all
 #  become: true
   vars:
     # Parameterized to allow easy reuse via AAP Surveys or Extra Vars
