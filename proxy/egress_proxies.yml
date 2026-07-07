@@ -1,7 +1,7 @@
 ---
 - name: Configure Egress Squid Proxies for New Destination
   hosts: all
-  become: true
+#  become: true
   vars:
     # These variables can be overridden via AAP Surveys or Extra Vars
     target_domain: "abc123.com"
