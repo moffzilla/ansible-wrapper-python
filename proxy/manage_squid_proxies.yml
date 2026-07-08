@@ -69,7 +69,9 @@
         group: root
 
   handlers:
+#    - name: Reload Squid Service
+#      ansible.builtin.service:
+#        name: squid
+#        state: reloaded
     - name: Reload Squid Service
-      ansible.builtin.service:
-        name: squid
-        state: reloaded
+      ansible.builtin.command: squid -k reconfigure
