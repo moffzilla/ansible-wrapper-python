@@ -1,14 +1,9 @@
 ---
-- name: Combined Squid Proxy Configuration (Internet & Internal)
-  hosts: all
-#  become: true
+- name: Combined Squid Proxy Configuration (Via GitOps EDA)
+  hosts: egress_proxies
+  become: true
   vars:
-    # Default values - meant to be overridden by AAP Survey
-    traffic_type: "internet"   # Options: 'internet' or 'internal'
-    target_domain: "abc123.com"
-    target_prefix: "abc123"
-
-    # Configuration map that dynamically switches paths and markers based on traffic_type
+    # Configuration map remains identical
     proxy_config_map:
       internet:
         squid_marker: '^#ALLOWED INTERNET WEBSITES ACL'
@@ -20,6 +15,14 @@
         groups_dir: '/etc/squid/groups/internal/intranet'
 
   tasks:
+    # -------------------------------------------------------------------------
+    # STEP 0: Ingest GitOps Payload
+    # -------------------------------------------------------------------------
+    - name: Load runtime variables from the committed JSON file
+      ansible.builtin.include_vars:
+        file: "{{ playbook_dir }}/proxy_request.json"
+      # This dynamically imports 'traffic_type', 'target_domain', and 'target_prefix' 
+
     # -------------------------------------------------------------------------
     # TASK 1: Modify squid.conf
     # -------------------------------------------------------------------------
@@ -50,7 +53,7 @@
         group: root
 
     # -------------------------------------------------------------------------
-    # TASK 3: Update groups files (Dynamic Path Assignment)
+    # TASK 3: Update groups files
     # -------------------------------------------------------------------------
     - name: Task 3 - Create domain file for new destination
       ansible.builtin.file:
@@ -69,9 +72,5 @@
         group: root
 
   handlers:
-#    - name: Reload Squid Service
-#      ansible.builtin.service:
-#        name: squid
-#        state: reloaded
     - name: Reload Squid Service
       ansible.builtin.command: squid -k reconfigure
