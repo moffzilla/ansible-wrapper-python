@@ -13,5 +13,5 @@
          'proxy_request.json' in event.head_commit.modified)
       action:
         run_job_template:
-          name: "Configure Squid Proxies"
-          organization: "Default"
+          name: "manage_egress_proxy"
+          organization: "att_labs"
