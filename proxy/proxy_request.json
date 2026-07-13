@@ -1,0 +1,5 @@
+{
+  "traffic_type": "internal",
+  "target_domain": "xyz456.com",
+  "target_prefix": "xyz456"
+}
