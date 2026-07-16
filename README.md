@@ -1,3 +1,9 @@
+This Repo includes several use cases to experiment
+
+1. ansible-wrapper-python (/files)
+2. Squid Proxy Configuration with Event-Driven Capabilities (/proxy and /rulebooks)
+3. IP and Ansible Ping sample (/ping)
+
 # ansible-wrapper-python
 
 
