@@ -1,0 +1,33 @@
+---
+- name: Listen to Palantir Ontology Stream
+  hosts: all
+  sources:
+    - ansible.eda.websocket:
+        url: "wss://{{ palantir_host }}/api/v2/ontologySubscriptions/ontologies/{{ ontology_id }}/streamSubscriptions"
+        headers:
+          Authorization: "Bearer {{ palantir_token }}"
+        # Initial handshake payload required by Palantir on socket open
+        init_payload:
+          id: "eda-listener-01"
+          requests:
+            - objectSet:
+                type: "base"
+                objectType: "InfrastructureAlert"
+              propertySet:
+                - "alertStatus"
+                - "affectedHost"
+                - "severity"
+
+  rules:
+    - name: React to Critical Infrastructure Alerts
+      condition: >
+        event.payload.objectUpdate.properties.severity == 'CRITICAL' and
+        event.payload.objectUpdate.properties.alertStatus == 'OPEN'
+      action:
+        run_job_template:
+          name: "Remediate Infrastructure Alert"
+          organization: "Default"
+          job_args:
+            extra_vars:
+              host_target: "{{ event.payload.objectUpdate.properties.affectedHost }}"
+              alert_id: "{{ event.payload.objectUpdate.primaryKey }}"
