@@ -25,8 +25,8 @@
         event.payload.objectUpdate.properties.alertStatus == 'OPEN'
       action:
         run_job_template:
-          name: "Remediate Infrastructure Alert"
-          organization: "Default"
+          name: "manage_egress_proxy"
+          organization: "att_labs"
           job_args:
             extra_vars:
               host_target: "{{ event.payload.objectUpdate.properties.affectedHost }}"
