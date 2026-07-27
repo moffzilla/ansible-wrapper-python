@@ -1,0 +1,16 @@
+####
+#;
+#; Date   : {{ ansible_date_time.weekday[:3] }} {{ ansible_date_time.month_name[:3] }} {{ ansible_date_time.day }} {{ ansible_date_time.time }} {{ ansible_date_time.tz }} {{ ansible_date_time.year }}
+#; File   : {{ dstn_web }}.conf
+#; Description: {{ dstn_web }}.
+#;
+####
+
+acl dstdomain_{{ dstn_web }}     dstdomain  "{{ proxy_config_map[traffic_type].groups_dir }}/{{ dstn_web }}.domain"
+acl dst_{{ dstn_web }}           dst        "{{ proxy_config_map[traffic_type].groups_dir }}/{{ dstn_web }}.ip"
+
+http_access         allow      src_mob_oam    dst_{{ dstn_web }}
+http_access         allow      src_mob_oam    dstdomain_{{ dstn_web }}
+
+#Block access to any other sites
+http_access         deny       all
