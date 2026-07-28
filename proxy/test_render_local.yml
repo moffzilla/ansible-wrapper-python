@@ -1,0 +1,46 @@
+---
+- name: Test Jinja2 Template Rendering Locally
+  hosts: localhost
+  connection: local
+  gather_facts: true  # Generates ansible_date_time facts required by the templates
+
+  vars:
+    # -------------------------------------------------------------------------
+    # TEST VARIABLES: Change these values to simulate different test scenarios
+    # -------------------------------------------------------------------------
+    traffic_type: "external"   # Try switching to 'internal'
+    dstn_web: "xyz456"
+    dstn_ips: "10.100.1.0/24"
+    dstn_full: "10.100.1.0/24"
+
+    # Simulated configuration paths
+    proxy_config_map:
+      external:
+        groups_dir: '/etc/squid/groups/external'
+      internal:
+        groups_dir: '/etc/squid/groups/internal/intranet'
+
+  tasks:
+    - name: Create local output directory for test results
+      ansible.builtin.file:
+        path: "./output"
+        state: directory
+
+    - name: Render access list conf file
+      ansible.builtin.template:
+        src: templates/access_list.conf.j2
+        dest: "./output/{{ dstn_web }}.conf"
+
+    - name: Render destination domain file
+      ansible.builtin.template:
+        src: templates/destination.domain.j2
+        dest: "./output/{{ dstn_web }}.domain"
+
+    - name: Render destination IP file
+      ansible.builtin.template:
+        src: templates/destination.ip.j2
+        dest: "./output/{{ dstn_web }}.ip"
+
+    - name: Display completion message
+      ansible.builtin.debug:
+        msg: "Rendering complete! Open the files inside 'proxy/output/' to verify."
