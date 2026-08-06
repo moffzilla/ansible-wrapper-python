@@ -12,11 +12,10 @@
           requests:
             - objectSet:
                 type: "base"
-                objectType: "InfrastructureAlert"
+                objectType: "Lab360ProxyFlow"
               propertySet:
-                - "alertStatus"
-                - "affectedHost"
-                - "severity"
+                - "destination"
+                - "destination_URL"
 
   rules:
     - name: React to Critical Infrastructure Alerts
