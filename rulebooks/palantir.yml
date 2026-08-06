@@ -5,14 +5,14 @@
     - ansible.eda.websocket:
         url: "wss://{{ palantir_host }}/api/v2/ontologySubscriptions/ontologies/{{ ontology_id }}/streamSubscriptions"
         headers:
-          Authorization: "Bearer {{ palantir_token }}"
+          Sec-WebSocket-Protocol: "Bearer-{{ palantir_token }}"
         # Initial handshake payload required by Palantir on socket open
         init_payload:
-          id: "eda-listener-01"
+          id: "{{ oncology_id }}"
           requests:
             - objectSet:
                 type: "base"
-                objectType: "Lab360ProxyFlow"
+                objectType: "{{ api_name }}"
               propertySet:
                 - "destination"
                 - "destination_URL"
