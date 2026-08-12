@@ -43,7 +43,7 @@
     - name: Append internet domain to ALLOWED INTERNET WEBSITES
       ansible.builtin.lineinfile:
         path: /etc/squid/squid.conf  # Replace with the path to your configuration file
-        regexp: '^(acl\s+{{ proxy_config_map.internet.destination | regex_escape }}\s+dstdomain\s+(?!.*\b{{ dstn_web | regex_escape }}\b).*)$'
+        regexp: '^(acl\s+{{ proxy_config_map[traffic_type].destination | regex_escape }}\s+dstdomain\s+(?!.*\b{{ dstn_web | regex_escape }}\b).*)$'
         line: '\1 {{ dstn_web }}'
         backrefs: yes
       notify: Reload Squid Service
@@ -51,7 +51,7 @@
     - name: Append internal domain to ALLOWED INTERNAL ATT WEBSITES
       ansible.builtin.lineinfile:
         path: /etc/squid/squid.conf
-        regexp: '^(acl\s+{{ proxy_config_map.internal.destination | regex_escape }}\s+dstdomain\s+(?!.*\b{{ dstn_web | regex_escape }}\b).*)$'
+        regexp: '^(acl\s+{{ proxy_config_map[traffic_type].destination | regex_escape }}\s+dstdomain\s+(?!.*\b{{ dstn_web | regex_escape }}\b).*)$'
         line: '\1 {{ dstn_web }}'
         backrefs: yes
       notify: Reload Squid Service
