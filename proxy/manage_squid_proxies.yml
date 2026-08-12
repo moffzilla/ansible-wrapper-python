@@ -53,8 +53,8 @@
         src: templates/access_list.conf.j2
         dest: "/etc/squid/access-lists/{{ dstn_web }}.conf"
         mode: '0644'
-        owner: root
-        group: root
+        owner: squid
+        group: squid
       notify: Reload Squid Service
 
     # -------------------------------------------------------------------------
@@ -65,8 +65,8 @@
         src: templates/destination.domain.j2
         dest: "{{ proxy_config_map[traffic_type].groups_dir }}/{{ dstn_web }}.domain"
         mode: '0644'
-        owner: root
-        group: root
+        owner: squid
+        group: squid
       notify: Reload Squid Service
 
     - name: Task 3 - Generate IP file for new destination
@@ -74,8 +74,8 @@
         src: templates/destination.ip.j2
         dest: "{{ proxy_config_map[traffic_type].groups_dir }}/{{ dstn_web }}.ip"
         mode: '0644'
-        owner: root
-        group: root
+        owner: squid
+        group: squid
       notify: Reload Squid Service
 
   # -------------------------------------------------------------------------
