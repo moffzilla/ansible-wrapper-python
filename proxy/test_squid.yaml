@@ -38,6 +38,7 @@
         regexp: '^(acl\s+{{ proxy_config_map[traffic_type].destination | regex_escape }}\s+dstdomain\s+(?!.*\b{{ dstn_web | regex_escape }}\b).*)$'
         line: '\1 {{ dstn_web }}'
         backrefs: yes
+      when: traffic_type == 'internet'
       notify: Reload Squid Service
 
     - name: Append internal domain to ALLOWED INTERNAL ATT WEBSITES
@@ -46,6 +47,7 @@
         regexp: '^(acl\s+{{ proxy_config_map[traffic_type].destination | regex_escape }}\s+dstdomain\s+(?!.*\b{{ dstn_web | regex_escape }}\b).*)$'
         line: '\1 {{ dstn_web }}'
         backrefs: yes
+      when: traffic_type == 'internal'
       notify: Reload Squid Service
       
   # -------------------------------------------------------------------------
