@@ -6,7 +6,7 @@
 
   vars:
     # Variables mapped from incoming payload / survey
-    traffic_type: "external"   # 'external' (internet) or 'internal'
+    traffic_type: "internet"   # internet or 'internal'
     dstn_web: "xyz456"
     dstn_ips: "10.100.1.0/24"
     dstn_full: "10.100.1.0/24"
@@ -17,10 +17,6 @@
 
     # Configuration map that dynamically switches paths and markers based on traffic_type
     proxy_config_map:
-      external:
-        squid_marker: '^#ALLOWED INTERNET WEBSITES ACL'
-        acl_main_file: '/etc/squid/access-lists/access-lists.conf'
-        groups_dir: '/etc/squid/groups/external'
       internet:
         squid_marker: '^#ALLOWED INTERNET WEBSITES ACL'
         acl_main_file: '/etc/squid/access-lists/access-lists.conf'
