@@ -48,6 +48,6 @@
   # -------------------------------------------------------------------------
   # HANDLERS: Executes squid -k reconfigure ONLY ONCE at the end
   # -------------------------------------------------------------------------
-  #handlers:
-  #  - name: Reload Squid Service
-  #    ansible.builtin.command: squid -k reconfigure
+  handlers:
+    - name: Reload Squid Service
+      ansible.builtin.command: squid -k reconfigure
