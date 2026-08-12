@@ -7,7 +7,7 @@
   vars:
     # Variables mapped from incoming payload / survey
     traffic_type: "internet"   # internet or 'internal'
-    dstn_web: "xyz456"
+    dstn_web: "xyz456.com"
     dstn_ips: "10.100.1.0/24"
     dstn_full: "10.100.1.0/24"
     flow_direct: "Egress"
@@ -38,6 +38,13 @@
         state: present
       notify: Reload Squid Service
 
+    - name: Append dstn_web.com to acl allow_dst dstdomain list
+      ansible.builtin.lineinfile:
+        path: /etc/squid/squid.conf  # Replace with the path to your configuration file
+        regexp: '^(acl\s+allow_dst\s+dstdomain\s+(?!.*\b{{ dstn_web | re_escape }}\b).*)$'
+        line: '\1 {{ dstn_web }}'
+        backrefs: yes
+      notify: Reload Squid Service
   # -------------------------------------------------------------------------
   # HANDLERS: Executes squid -k reconfigure ONLY ONCE at the end
   # -------------------------------------------------------------------------
