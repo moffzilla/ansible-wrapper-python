@@ -18,7 +18,7 @@
     # Configuration map that dynamically switches paths and markers based on traffic_type
     proxy_config_map:
       internet:
-        squid_marker: '^#ALLOWED INTERNET WEBSITES'
+        squid_marker: '#ALLOWED INTERNET WEBSITES'
         acl_main_file: '/etc/squid/access-lists/access-lists.conf'
         groups_dir: '/etc/squid/groups/external'
       internal:
