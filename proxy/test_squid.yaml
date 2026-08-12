@@ -38,49 +38,10 @@
         state: present
       notify: Reload Squid Service
 
-    # -------------------------------------------------------------------------
-    # TASK 2: Update access-lists
-    # -------------------------------------------------------------------------
-    - name: Task 2 - Append include line to target access-lists configuration file
-      ansible.builtin.lineinfile:
-        path: "{{ proxy_config_map[traffic_type].acl_main_file }}"
-        line: "include /etc/squid/access-lists/{{ dstn_web }}.conf"
-        state: present
-      notify: Reload Squid Service
-
-    - name: Task 2 - Generate the destination access-list configuration file from template
-      ansible.builtin.template:
-        src: templates/access_list.conf.j2
-        dest: "/etc/squid/access-lists/{{ dstn_web }}.conf"
-        mode: '0644'
-        owner: root
-        group: root
-      notify: Reload Squid Service
-
-    # -------------------------------------------------------------------------
-    # TASK 3: Generate Domain & IP Files via Templates
-    # -------------------------------------------------------------------------
-    - name: Task 3 - Generate domain file for new destination
-      ansible.builtin.template:
-        src: templates/destination.domain.j2
-        dest: "{{ proxy_config_map[traffic_type].groups_dir }}/{{ dstn_web }}.domain"
-        mode: '0644'
-        owner: root
-        group: root
-      notify: Reload Squid Service
-
-    - name: Task 3 - Generate IP file for new destination
-      ansible.builtin.template:
-        src: templates/destination.ip.j2
-        dest: "{{ proxy_config_map[traffic_type].groups_dir }}/{{ dstn_web }}.ip"
-        mode: '0644'
-        owner: root
-        group: root
-      notify: Reload Squid Service
 
   # -------------------------------------------------------------------------
   # HANDLERS: Executes squid -k reconfigure ONLY ONCE at the end
   # -------------------------------------------------------------------------
-  handlers:
-    - name: Reload Squid Service
-      ansible.builtin.command: squid -k reconfigure
+  #handlers:
+  #  - name: Reload Squid Service
+  #    ansible.builtin.command: squid -k reconfigure
