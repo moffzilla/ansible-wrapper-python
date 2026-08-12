@@ -30,12 +30,20 @@
     # -------------------------------------------------------------------------
     # TASK 1: Modify squid.conf
     # -------------------------------------------------------------------------
-    - name: Task 1 - Add new URL ACL under the selected allowed section
-      ansible.builtin.lineinfile:
+    #- name: Task 1 - Add new URL ACL under the selected allowed section
+    #  ansible.builtin.lineinfile:
+    #    path: /etc/squid/squid.conf
+    #    line: "acl allow_dst dstdomain .{{ dstn_web }}.com"
+    #    insertafter: "{{ proxy_config_map[traffic_type].squid_marker }}"
+    #    state: present
+    #  notify: Reload Squid Service
+
+    - name: Insert dstn_web domain as first entry after acl allow_dst dstdomain
+      ansible.builtin.replace:
         path: /etc/squid/squid.conf
-        line: "acl allow_dst dstdomain .{{ dstn_web }}.com"
-        insertafter: "{{ proxy_config_map[traffic_type].squid_marker }}"
-        state: present
+        regexp: '^(acl\s+allow_dst\s+dstdomain)(?!\s+{{\> dstn_web | regex_escape }}'
+        replace: '\1 {{ dstn_web }}'
+      register: squid_acl_update
       notify: Reload Squid Service
 
 
