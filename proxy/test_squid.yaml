@@ -41,7 +41,7 @@
     - name: Append dstn_web.com to acl allow_dst dstdomain list
       ansible.builtin.lineinfile:
         path: /etc/squid/squid.conf  # Replace with the path to your configuration file
-        regexp: '^(acl\s+allow_dst\s+dstdomain\s+(?!.*\b{{ dstn_web | re_escape }}\b).*)$'
+        regexp: '^(acl\s+allow_dst\s+dstdomain\s+(?!.*\b{{ dstn_web | regex_escape }}\b).*)$'
         line: '\1 {{ dstn_web }}'
         backrefs: yes
       notify: Reload Squid Service
