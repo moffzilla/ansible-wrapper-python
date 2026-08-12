@@ -7,7 +7,7 @@
   vars:
     # Variables mapped from incoming payload / survey
     traffic_type: "internet"   # internet or 'internal'
-    dstn_web: "xyz456.com"
+    dstn_web: ".ixyz456.com"
     dstn_ips: "10.100.1.0/24"
     dstn_full: "10.100.1.0/24"
     flow_direct: "Egress"
@@ -21,10 +21,12 @@
         squid_marker: '#ALLOWED INTERNET WEBSITES'
         acl_main_file: '/etc/squid/access-lists/access-lists.conf'
         groups_dir: '/etc/squid/groups/external'
+        destination: 'allow_dst'
       internal:
         squid_marker: '^#ALLOWED INTERNAL ATT WEBSITES'
         acl_main_file: '/etc/squid/access-lists/access-lists-internal.conf'
         groups_dir: '/etc/squid/groups/internal/intranet'
+        destination: 'internal_dst'
 
   tasks:
     # -------------------------------------------------------------------------
@@ -38,13 +40,22 @@
         state: present
       notify: Reload Squid Service
 
-    - name: Append dstn_web.com to acl allow_dst dstdomain list
+    - name: Append internet domain to ALLOWED INTERNET WEBSITES
       ansible.builtin.lineinfile:
         path: /etc/squid/squid.conf  # Replace with the path to your configuration file
-        regexp: '^(acl\s+allow_dst\s+dstdomain\s+(?!.*\b{{ dstn_web | regex_escape }}\b).*)$'
+        regexp: '^(acl\s+{{ proxy_config_map.internet.destination | regex_escape }}\s+dstdomain\s+(?!.*\b{{ dstn_web | regex_escape }}\b).*)$'
+        line: '\1 {{ dstn_web }}'
+        backrefs: yes
+      notify: Reload Squid Servicearegexp: 
+
+    - name: Append internal domain to ALLOWED INTERNAL ATT WEBSITES
+      ansible.builtin.lineinfile:
+        path: /etc/squid/squid.conf
+        regexp: '^(acl\s+{{ proxy_config_map.internal.destination | regex_escape }}\s+dstdomain\s+(?!.*\b{{ dstn_web | regex_escape }}\b).*)$'
         line: '\1 {{ dstn_web }}'
         backrefs: yes
       notify: Reload Squid Service
+      
   # -------------------------------------------------------------------------
   # HANDLERS: Executes squid -k reconfigure ONLY ONCE at the end
   # -------------------------------------------------------------------------
