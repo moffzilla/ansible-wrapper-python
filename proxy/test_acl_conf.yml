@@ -33,24 +33,15 @@
 
   tasks:
     # -------------------------------------------------------------------------
-    # TASK 1: Modify squid.conf
+    # TASK 2: Create domain conf files via templates
     # -------------------------------------------------------------------------
-    - name: Append internet domain to ALLOWED INTERNET WEBSITES
-      ansible.builtin.lineinfile:
-        path: '{{ squid_path }}'  # Replace with the path to your configuration file
-        regexp: '^(acl\s+{{ proxy_config_map[traffic_type].destination | regex_escape }}\s+dstdomain\s+(?!.*\b{{ dstn_web_acl | regex_escape }}\b).*)$'
-        line: '\1 {{ dstn_web_acl }}'
-        backrefs: yes
-      when: traffic_type == 'internet'
-      notify: Reload Squid Service
-
-    - name: Append internal domain to ALLOWED INTERNAL ATT WEBSITES
-      ansible.builtin.lineinfile:
-        path: '{{ squid_path }}'
-        regexp: '^(acl\s+{{ proxy_config_map[traffic_type].destination | regex_escape }}\s+dstdomain\s+(?!.*\b{{ dstn_web_acl | regex_escape }}\b).*)$'
-        line: '\1 {{ dstn_web_acl}}'
-        backrefs: yes
-      when: traffic_type == 'internal'
+    - name: Task 2 - Generate the destination access-list configuration file from template
+      ansible.builtin.template:
+        src: templates/access_list.conf.j2
+        dest: "/etc/squid/access-lists/{{ dstn_web }}.conf"
+        mode: '0644'
+        owner: squid
+        group: squid
       notify: Reload Squid Service
       
   # -------------------------------------------------------------------------
