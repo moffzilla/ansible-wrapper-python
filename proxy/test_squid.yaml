@@ -14,6 +14,8 @@
     flow_path: "External"
     src_ips: "10.200.1.0/24"
     src_full: "10.200.1.0/24"
+    #squid_path: "/etc/squid/squid.conf"
+    squid_path: "/tmp/squid.conf"
 
     # Configuration map that dynamically switches paths and markers based on traffic_type
     proxy_config_map:
@@ -34,7 +36,7 @@
     # -------------------------------------------------------------------------
     - name: Append internet domain to ALLOWED INTERNET WEBSITES
       ansible.builtin.lineinfile:
-        path: /etc/squid/squid.conf  # Replace with the path to your configuration file
+        path: '{{ squid_path }}'  # Replace with the path to your configuration file
         regexp: '^(acl\s+{{ proxy_config_map[traffic_type].destination | regex_escape }}\s+dstdomain\s+(?!.*\b{{ dstn_web | regex_escape }}\b).*)$'
         line: '\1 {{ dstn_web }}'
         backrefs: yes
@@ -43,7 +45,7 @@
 
     - name: Append internal domain to ALLOWED INTERNAL ATT WEBSITES
       ansible.builtin.lineinfile:
-        path: /etc/squid/squid.conf
+        path: '{{ squid_path }}'
         regexp: '^(acl\s+{{ proxy_config_map[traffic_type].destination | regex_escape }}\s+dstdomain\s+(?!.*\b{{ dstn_web | regex_escape }}\b).*)$'
         line: '\1 {{ dstn_web }}'
         backrefs: yes
