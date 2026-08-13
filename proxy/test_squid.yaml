@@ -8,6 +8,7 @@
     # Variables mapped from incoming payload / survey
     #traffic_type: "internet"   # internet or 'internal'
     #dstn_web: ".ixyz456.com"
+    dstn_web_acl: ".{{ dstn_web }}"
     dstn_ips: "10.100.1.0/24"
     dstn_full: "10.100.1.0/24"
     flow_direct: "Egress"
@@ -37,8 +38,8 @@
     - name: Append internet domain to ALLOWED INTERNET WEBSITES
       ansible.builtin.lineinfile:
         path: '{{ squid_path }}'  # Replace with the path to your configuration file
-        regexp: '^(acl\s+{{ proxy_config_map[traffic_type].destination | regex_escape }}\s+dstdomain\s+(?!.*\b{{ dstn_web | regex_escape }}\b).*)$'
-        line: '\1 {{ dstn_web }}'
+        regexp: '^(acl\s+{{ proxy_config_map[traffic_type].destination | regex_escape }}\s+dstdomain\s+(?!.*\b{{ dstn_web_acl | regex_escape }}\b).*)$'
+        line: '\1 {{ dstn_web_acl }}'
         backrefs: yes
       when: traffic_type == 'internet'
       notify: Reload Squid Service
@@ -46,8 +47,8 @@
     - name: Append internal domain to ALLOWED INTERNAL ATT WEBSITES
       ansible.builtin.lineinfile:
         path: '{{ squid_path }}'
-        regexp: '^(acl\s+{{ proxy_config_map[traffic_type].destination | regex_escape }}\s+dstdomain\s+(?!.*\b{{ dstn_web | regex_escape }}\b).*)$'
-        line: '\1 {{ dstn_web }}'
+        regexp: '^(acl\s+{{ proxy_config_map[traffic_type].destination | regex_escape }}\s+dstdomain\s+(?!.*\b{{ dstn_web_acl | regex_escape }}\b).*)$'
+        line: '\1 {{ dstn_web_acl}}'
         backrefs: yes
       when: traffic_type == 'internal'
       notify: Reload Squid Service
