@@ -52,6 +52,27 @@
         backrefs: yes
       when: traffic_type == 'internal'
       notify: Reload Squid Service
+
+    # -------------------------------------------------------------------------
+    # TASK 3: Generate Domain & IP Files via Templates
+    # -------------------------------------------------------------------------
+    - name: Task 3 - Generate domain file for new destination
+      ansible.builtin.template:
+        src: templates/destination.domain.j2
+        dest: "{{ proxy_config_map[traffic_type].groups_dir }}/{{ dstn_web }}.domain"
+        mode: '0644'
+        owner: squid
+        group: squid
+      notify: Reload Squid Service
+
+    - name: Task 3 - Generate IP file for new destination
+      ansible.builtin.template:
+        src: templates/destination.ip.j2
+        dest: "{{ proxy_config_map[traffic_type].groups_dir }}/{{ dstn_web }}.ip"
+        mode: '0644'
+        owner: squid
+        group: squid
+      notify: Reload Squid Service
       
   # -------------------------------------------------------------------------
   # HANDLERS: Executes squid -k reconfigure ONLY ONCE at the end
