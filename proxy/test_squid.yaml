@@ -6,8 +6,8 @@
 
   vars:
     # Variables mapped from incoming payload / survey
-    traffic_type: "internet"   # internet or 'internal'
-    dstn_web: ".ixyz456.com"
+    #traffic_type: "internet"   # internet or 'internal'
+    #dstn_web: ".ixyz456.com"
     dstn_ips: "10.100.1.0/24"
     dstn_full: "10.100.1.0/24"
     flow_direct: "Egress"
