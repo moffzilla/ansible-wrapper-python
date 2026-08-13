@@ -9,8 +9,8 @@
     #traffic_type: "internet"   # internet or 'internal'
     #dstn_web: ".ixyz456.com"
     dstn_web_acl: ".{{ dstn_web }}"
-    dstn_ips: "10.100.1.0/24"
-    dstn_full: "10.100.1.0/24"
+    #dstn_ips: "10.100.1.0/24"
+    #dstn_full: "10.100.1.0/24"
     flow_direct: "Egress"
     flow_path: "External"
     src_ips: "10.200.1.0/24"
@@ -39,6 +39,27 @@
       ansible.builtin.template:
         src: templates/access_list.conf.j2
         dest: "/etc/squid/access-lists/{{ dstn_web }}.conf"
+        mode: '0644'
+        owner: squid
+        group: squid
+      notify: Reload Squid Service
+
+    # -------------------------------------------------------------------------
+    # TASK 3: Generate Domain & IP Files via Templates
+    # -------------------------------------------------------------------------
+    - name: Task 3 - Generate domain file for new destination
+      ansible.builtin.template:
+        src: templates/destination.domain.j2
+        dest: "{{ proxy_config_map[traffic_type].groups_dir }}/{{ dstn_web }}.domain"
+        mode: '0644'
+        owner: squid
+        group: squid
+      notify: Reload Squid Service
+
+    - name: Task 3 - Generate IP file for new destination
+      ansible.builtin.template:
+        src: templates/destination.ip.j2
+        dest: "{{ proxy_config_map[traffic_type].groups_dir }}/{{ dstn_web }}.ip"
         mode: '0644'
         owner: squid
         group: squid
