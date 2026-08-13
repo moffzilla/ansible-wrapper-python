@@ -1,0 +1,54 @@
+---
+- name: Combined Squid Proxy Configuration via Templates
+  hosts: all
+  become: true
+  gather_facts: true  # Required to generate dynamic date/time strings for template headers
+
+  vars:
+    # Variables mapped from incoming payload / survey
+    #traffic_type: "internet"   # internet or 'internal'
+    #dstn_web: ".ixyz456.com"
+    dstn_web_acl: ".{{ dstn_web }}"
+    #dstn_ips: "10.100.1.0/24"
+    #dstn_full: "10.100.1.0/24"
+    flow_direct: "Egress"
+    flow_path: "External"
+    src_ips: "10.200.1.0/24"
+    src_full: "10.200.1.0/24"
+    #squid_path: "/etc/squid/squid.conf"
+    squid_path: "/tmp/squid.conf"
+
+    # Configuration map that dynamically switches paths and markers based on traffic_type
+    proxy_config_map:
+      internet:
+        squid_marker: '#ALLOWED INTERNET WEBSITES'
+        acl_main_file: '/etc/squid/access-lists/access-lists.conf'
+        groups_dir: '/etc/squid/groups/external'
+        destination: 'allow_dst'
+      internal:
+        squid_marker: '^#ALLOWED INTERNAL ATT WEBSITES'
+        acl_main_file: '/etc/squid/access-lists/access-lists-internal.conf'
+        groups_dir: '/etc/squid/groups/internal/intranet'
+        destination: 'internal_dst'
+
+  tasks:
+    # -------------------------------------------------------------------------
+    # TASK 1: Modify squid.conf
+    # -------------------------------------------------------------------------
+    - name: Append internet domain to ALLOWED INTERNET WEBSITES
+      ansible.builtin.lineinfile:
+        path: '{{ squid_path }}'  # Replace with the path to your configuration file
+        regexp: '^(acl\s+{{ proxy_config_map[traffic_type].destination | regex_escape }}\s+dstdomain\s+(?!.*\b{{ dstn_web_acl | regex_escape }}\b).*)$'
+        line: '\1 {{ dstn_web_acl }}'
+        backrefs: yes
+      when: traffic_type == 'internet'
+      notify: Reload Squid Service
+
+    - name: Append internal domain to ALLOWED INTERNAL ATT WEBSITES
+      ansible.builtin.lineinfile:
+        path: '{{ squid_path }}'
+        regexp: '^(acl\s+{{ proxy_config_map[traffic_type].destination | regex_escape }}\s+dstdomain\s+(?!.*\b{{ dstn_web_acl | regex_escape }}\b).*)$'
+        line: '\1 {{ dstn_web_acl}}'
+        backrefs: yes
+      when: traffic_type == 'internal'
+      notify: Reload Squid Service
