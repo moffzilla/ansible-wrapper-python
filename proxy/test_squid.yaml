@@ -25,34 +25,26 @@
         acl_main_file: '/etc/squid/access-lists/access-lists.conf'
         groups_dir: '/etc/squid/groups/external'
         destination: 'allow_dst'
+        config_dir: '/etc/squid/access-lists'
       internal:
         squid_marker: '^#ALLOWED INTERNAL ATT WEBSITES'
         acl_main_file: '/etc/squid/access-lists/access-lists-internal.conf'
         groups_dir: '/etc/squid/groups/internal/intranet'
         destination: 'internal_dst'
+        config_dir: '/etc/squid/groups/internal/intranet'
 
   tasks:
     # -------------------------------------------------------------------------
-    # TASK 1: Modify squid.conf
+    # TASK 3: Append custom include rule in the access list
     # -------------------------------------------------------------------------
-    - name: Append internet domain to ALLOWED INTERNET WEBSITES
+    - name: Append custom include rule before deny.conf in the access-list configuration
       ansible.builtin.lineinfile:
-        path: '{{ squid_path }}'  # Replace with the path to your configuration file
-        regexp: '^(acl\s+{{ proxy_config_map[traffic_type].destination | regex_escape }}\s+dstdomain\s+(?!.*\b{{ dstn_web_acl | regex_escape }}\b).*)$'
-        line: '\1 {{ dstn_web_acl }}'
-        backrefs: yes
-      when: traffic_type == 'internet'
-      notify: Reload Squid Service
-
-    - name: Append internal domain to ALLOWED INTERNAL ATT WEBSITES
-      ansible.builtin.lineinfile:
-        path: '{{ squid_path }}'
-        regexp: '^(acl\s+{{ proxy_config_map[traffic_type].destination | regex_escape }}\s+dstdomain\s+(?!.*\b{{ dstn_web_acl | regex_escape }}\b).*)$'
-        line: '\1 {{ dstn_web_acl}}'
-        backrefs: yes
-      when: traffic_type == 'internal'
-      notify: Reload Squid Service
-
+        path: '{{ proxy_config_map[traffic_type].acl_main_file }}'
+        insertbefore: '^#;deny\.conf must be last'
+        line: 'include "{{ proxy_config_map[traffic_type].config_dir }}/{{ dstn_web }}.conf"'
+        state: present
+      notify: Reload Squid Service      
+    
       
   # -------------------------------------------------------------------------
   # HANDLERS: Executes squid -k reconfigure ONLY ONCE at the end
