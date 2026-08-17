@@ -41,7 +41,7 @@
       ansible.builtin.lineinfile:
         path: '{{ proxy_config_map[traffic_type].acl_main_file }}'
         insertbefore: '.*#;deny\.conf must be last.*'
-        line: 'include "{{ proxy_config_map[traffic_type].config_dir }}/{{ dstn_web }}.conf"'
+        line: 'include {{ proxy_config_map[traffic_type].config_dir }}/{{ dstn_web }}.conf'
         state: present
       notify: Reload Squid Service      
     
