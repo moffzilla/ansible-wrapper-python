@@ -25,11 +25,13 @@
         acl_main_file: '/etc/squid/access-lists/access-lists.conf'
         groups_dir: '/etc/squid/groups/external'
         destination: 'allow_dst'
+        config_dir: '/etc/squid/access-lists'
       internal:
         squid_marker: '^#ALLOWED INTERNAL ATT WEBSITES'
         acl_main_file: '/etc/squid/access-lists/access-lists-internal.conf'
         groups_dir: '/etc/squid/groups/internal/intranet'
         destination: 'internal_dst'
+        config_dir: '/etc/squid/groups/internal/intranet'
 
   tasks:
     # -------------------------------------------------------------------------
@@ -59,21 +61,10 @@
     - name: Task 2 - Generate the destination access-list configuration file from template
       ansible.builtin.template:
         src: templates/access_list.conf.j2
-        dest: "/etc/squid/access-lists/{{ dstn_web }}.conf"
+        dest: "{{ proxy_config_map[traffic_type].config_dir }}/{{ dstn_web }}.conf"
         mode: '0644'
         owner: squid
         group: squid
-      when: traffic_type == 'internet'
-      notify: Reload Squid Service
-
-    - name: Task 2 - Generate the destination access-list configuration file from template
-      ansible.builtin.template:
-        src: templates/access_list.conf.j2
-        dest: "/etc/squid/groups/internal/intranet/{{ dstn_web }}.conf"
-        mode: '0644'
-        owner: squid
-        group: squid
-      when: traffic_type == 'internal'
       notify: Reload Squid Service
 
     # -------------------------------------------------------------------------
