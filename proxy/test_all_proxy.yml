@@ -63,6 +63,17 @@
         mode: '0644'
         owner: squid
         group: squid
+      when: traffic_type == 'internet'
+      notify: Reload Squid Service
+
+    - name: Task 2 - Generate the destination access-list configuration file from template
+      ansible.builtin.template:
+        src: templates/access_list.conf.j2
+        dest: "/etc/squid/groups/internal/intranet/{{ dstn_web }}.conf"
+        mode: '0644'
+        owner: squid
+        group: squid
+      when: traffic_type == 'internal'
       notify: Reload Squid Service
 
     # -------------------------------------------------------------------------
