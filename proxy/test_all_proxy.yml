@@ -37,7 +37,7 @@
     # -------------------------------------------------------------------------
     # TASK 1: Modify squid.conf
     # -------------------------------------------------------------------------
-    - name: Append internet domain to ALLOWED INTERNET WEBSITES
+    - name: Append internet domain to ALLOWED INTERNET WEBSITES or ALLOWED INTERNAL ATT WEBSITES
       ansible.builtin.lineinfile:
         path: '{{ squid_path }}'  # Replace with the path to your configuration file
         regexp: '^(acl\s+{{ proxy_config_map[traffic_type].destination | regex_escape }}\s+dstdomain\s+(?!.*\b{{ dstn_web_acl | regex_escape }}\b).*)$'
