@@ -43,16 +43,7 @@
         regexp: '^(acl\s+{{ proxy_config_map[traffic_type].destination | regex_escape }}\s+dstdomain\s+(?!.*\b{{ dstn_web_acl | regex_escape }}\b).*)$'
         line: '\1 {{ dstn_web_acl }}'
         backrefs: yes
-      when: traffic_type == 'internet'
-      notify: Reload Squid Service
-
-    - name: Append internal domain to ALLOWED INTERNAL ATT WEBSITES
-      ansible.builtin.lineinfile:
-        path: '{{ squid_path }}'
-        regexp: '^(acl\s+{{ proxy_config_map[traffic_type].destination | regex_escape }}\s+dstdomain\s+(?!.*\b{{ dstn_web_acl | regex_escape }}\b).*)$'
-        line: '\1 {{ dstn_web_acl}}'
-        backrefs: yes
-      when: traffic_type == 'internal'
+      #when: traffic_type == 'internet'
       notify: Reload Squid Service
 
     # -------------------------------------------------------------------------
