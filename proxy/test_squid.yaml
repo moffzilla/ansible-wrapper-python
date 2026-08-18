@@ -37,18 +37,12 @@
     # -------------------------------------------------------------------------
     # TASK 3: Append custom include rule in the access list
     # -------------------------------------------------------------------------
-    - name: Append custom include rule before deny.conf in the access-list configuration
+   - name: Append custom include rule before deny.conf in the access-list configuration
       ansible.builtin.lineinfile:
         path: '{{ proxy_config_map[traffic_type].acl_main_file }}'
-        insertbefore: '.*#;deny\.conf must be last.*'
+        insertbefore: "^#; deny\\.conf must be last"
         line: 'include {{ proxy_config_map[traffic_type].config_dir }}/{{ dstn_web }}.conf'
-        state: present
-      notify: Reload Squid Service      
+        state: present   
     
       
-  # -------------------------------------------------------------------------
-  # HANDLERS: Executes squid -k reconfigure ONLY ONCE at the end
-  # -------------------------------------------------------------------------
-  handlers:
-    - name: Reload Squid Service
-      ansible.builtin.command: squid -k reconfigure
+
