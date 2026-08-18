@@ -63,7 +63,7 @@
         insertbefore: "^#; deny\\.conf must be last"
         line: 'include {{ proxy_config_map[traffic_type].config_dir }}/{{ dstn_web }}.conf'
         state: present   
-      notify: Reload Squid Service      
+      notify: Reload Squid Service         
       
     # -------------------------------------------------------------------------
     # TASK 4: Generate Domain & IP Files via Templates
