@@ -11,10 +11,6 @@
     dstn_web_acl: ".{{ dstn_web }}"
     #dstn_ips: "10.100.1.0/24"
     #dstn_full: "10.100.1.0/24"
-    flow_direct: "Egress"
-    flow_path: "External"
-    src_ips: "10.200.1.0/24"
-    src_full: "10.200.1.0/24"
     #squid_path: "/etc/squid/squid.conf"
     squid_path: "/tmp/squid.conf"
 
