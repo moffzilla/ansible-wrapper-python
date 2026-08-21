@@ -14,8 +14,8 @@
     #dstn_ips: ["10.100.1.0/24", "20.20.20.0/24", "8.8.8.0/24"] 
     #dstn_ips: ["10.100.1.0/24"]
     #dstn_full: "10.100.1.0/24"
-    #squid_path: "/etc/squid/squid.conf"
-    squid_path: "/tmp/squid.conf"
+    squid_path: "/etc/squid/squid.conf"
+    #squid_path: "/tmp/squid.conf"
 
     # Configuration map that dynamically switches paths and markers based on traffic_type
     proxy_config_map:
