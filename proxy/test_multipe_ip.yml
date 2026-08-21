@@ -35,5 +35,5 @@
   tasks:
     - name: Display the full list variable
       ansible.builtin.debug:
-        var: dstn_ip
+        var: dstn_ips
 
