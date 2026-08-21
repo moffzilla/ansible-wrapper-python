@@ -1,0 +1,16 @@
+- name: Print destination IPs from AAP survey
+  hosts: localhost
+  gather_facts: no
+  vars:
+    # Handles both direct YAML lists and multi-line strings from AAP survey textareas
+    dstn_ips: >-
+      {{
+        dstn_ips_raw.splitlines()
+        if dstn_ips_raw is string
+        else dstn_ips_raw
+      }}
+
+  tasks:
+    - name: Display the full list variable
+      ansible.builtin.debug:
+        var: dstn_ip
