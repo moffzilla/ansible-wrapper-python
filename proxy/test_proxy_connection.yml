@@ -1,0 +1,28 @@
+---
+- name: Test HTTPS Connections via Squid Proxy Inventory
+  hosts: squid_proxies
+  gather_facts: false
+  vars:
+    # Target URL to verify HTTPS connectivity - It should come from a workflow
+    #target_url: "https://httpbin.org/get"
+    
+  tasks:
+    - name: Construct proxy URL dynamically per host
+      ansible.builtin.set_fact:
+        current_proxy_url: http://{{ ansible_host | default(inventory_hostname) }}:{{ squid_port | default(3128) }}
+
+    - name: Test HTTPS connection through Squid proxy
+      ansible.builtin.uri:
+        url: "{{ target_url }}"
+        method: GET
+        status_code: 200
+        timeout: 10
+        validate_certs: false
+      environment:
+        http_proxy: "{{ current_proxy_url }}"
+        https_proxy: "{{ current_proxy_url }}"
+      register: proxy_test_result
+
+    - name: Display connection success
+      ansible.builtin.debug:
+        msg: "SUCCESS: {{ inventory_hostname }} ({{ ansible_host | default(inventory_hostname) }}) routed HTTPS traffic to {{ target_url }} successfully."
