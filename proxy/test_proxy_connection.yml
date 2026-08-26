@@ -1,6 +1,6 @@
 ---
 - name: Test HTTPS Connections via Squid Proxy Inventory
-  hosts: squid_proxies
+  hosts: egress_proxies
   gather_facts: false
   vars:
     # Target URL to verify HTTPS connectivity - It should come from a workflow
