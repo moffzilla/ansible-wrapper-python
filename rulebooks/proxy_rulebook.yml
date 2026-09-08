@@ -17,9 +17,10 @@
           organization: "att_labs"
           job_args:
             extra_vars:
- #             traffic_type: "{{ event.body.traffic_type }}"
- #             dtsn_web: "{{ event.body.dtsn_web }}"
- #             dstn_ips_raw: "{{ event.body.dstn_ips_raw }}"
-              traffic_type: "internet"
-              dtsn_web: "xyz456.com"
-              dstn_ips_raw: "10.10.10.10"
+              traffic_type: "{{ event.payload.traffic_type }}"
+              dstn_web: "{{ event.payload.dstn_web }}"
+              dstn_ips_raw: "{{ event.payload.dstn_ips_raw }}"
+#              traffic_type: "internet"
+#              dtsn_web: "xyz456.com"
+#              dstn_ips_raw: "10.10.10.10"
+
