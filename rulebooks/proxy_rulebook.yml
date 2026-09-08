@@ -7,10 +7,10 @@
         port: 5000  # The port EDA will listen on inside AAP
   rules:
     - name: Trigger Proxy Playbook when JSON file is pushed
-      condition: >
-        event.head_commit is defined and 
-        ('proxy_request.json' in event.head_commit.added or 
-         'proxy_request.json' in event.head_commit.modified)
+      condition: true
+#        event.head_commit is defined and 
+#        ('proxy_request.json' in event.head_commit.added or 
+#         'proxy_request.json' in event.head_commit.modified)
       action:
         run_job_template:
           name: "rh_test_squid_proxy"
