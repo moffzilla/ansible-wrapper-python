@@ -90,10 +90,10 @@
       notify: Reload Squid Service
 
     - name: Pass variable downstream to AAP Workflow
-          ansible.builtin.set_stats:
-            data:
-              target_url: "{{ dstn_web }}"
-      
+      ansible.builtin.set_stats:
+        data:
+          target_url: "{{ dstn_web }}"
+          
   # -------------------------------------------------------------------------
   # HANDLERS: Executes squid -k reconfigure ONLY ONCE at the end
   # -------------------------------------------------------------------------
