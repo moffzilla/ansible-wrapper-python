@@ -15,3 +15,11 @@
         run_job_template:
           name: "rh_test_squid_proxy"
           organization: "att_labs"
+          job_args:
+            extra_vars:
+ #             traffic_type: "{{ event.body.traffic_type }}"
+ #             dtsn_web: "{{ event.body.dtsn_web }}"
+ #             dstn_ips_raw: "{{ event.body.dstn_ips_raw }}"
+              traffic_type: "internet"
+              dtsn_web: "snowflake"
+              dstn_ips_raw: "172.66.1.187"
