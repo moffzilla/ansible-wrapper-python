@@ -13,7 +13,7 @@
 #         'proxy_request.json' in event.head_commit.modified)
       action:
         run_job_template:
-          name: "rh_test_squid_proxy"
+          name: "rh_test_squid_proxy_eda"
           organization: "att_labs"
           job_args:
             extra_vars:
