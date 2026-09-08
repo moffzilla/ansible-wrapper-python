@@ -21,6 +21,5 @@
  #             dtsn_web: "{{ event.body.dtsn_web }}"
  #             dstn_ips_raw: "{{ event.body.dstn_ips_raw }}"
               traffic_type: "internet"
-              dtsn_web: "snowflake"
-              dstn_ips_raw: |- "172.66.1.187"
-                               "162.159.141.191"
+              dtsn_web: "xyz456.com"
+              dstn_ips_raw: "10.10.10.10"
