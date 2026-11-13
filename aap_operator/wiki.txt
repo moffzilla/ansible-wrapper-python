@@ -1,0 +1,58 @@
+[lab-user@bastion ~]$ pwd
+/home/lab-user
+[lab-user@bastion ~]$ ls -lrt
+total 112
+-rw-r--r--. 1 lab-user users    459 Nov 13 16:02 aap-deployment.yaml
+-rw-r--r--. 1 lab-user users 104417 Nov 13 16:40 manifest_moffsible_20260408T135808Z.zip  --> Downloads/inventory-att   
+-rw-r--r--. 1 lab-user users    830 Nov 13 16:43 apply-manifest.yml
+[lab-user@bastion ~]$ 
+
+VM
+oc login -u admin -p [Add credentials] https://api.cluster-xxxxx.xxx.redhatworkshops.io:6443
+oc get vms -n aap-lab
+oc get vmi -n aap-lab
+oc get svc -n aap-lab
+
+Operator Install
+oc project aap
+vim aap-deployment.yaml
+oc apply -f aap-deployment.yaml
+watch "oc get pods -n aap"
+oc get secret aap-deployment-admin-password -n aap -o jsonpath="{.data.password}" | base64 --decode; echo
+oc get route -n aap
+
+Manifest
+sudo dnf install ansible-core
+ansible-galaxy collection install ansible.controller
+ansible-galaxy collection install awx.awx
+ansible-playbook apply-manifest.yml
+
+watch "oc get pods -n ansible-automation-platform"
+watch "oc get pods -n aap"
+
+
+For Reference:
+
+aap-deployment-automationmetricsservice-scheduler-6855585fjz7qf   1/1     Running     0             84m
+aap-deployment-automationmetricsservice-tasks-84db8878f5-5rdgs    1/1     Running     0             84m
+aap-deployment-automationmetricsservice-web-84df7fd9d5-kcd2j      1/1     Running     0             85m
+aap-deployment-controller-migration-4.8.13-z4xpk                  0/1     Completed   0             84m
+aap-deployment-controller-task-676f669c58-hfjwl                   4/4     Running     0             85m
+aap-deployment-controller-web-7577b64587-6cxsv                    3/3     Running     0             85m
+aap-deployment-eda-activation-worker-669ffc85c6-fcfdv             1/1     Running     0             86m
+aap-deployment-eda-activation-worker-669ffc85c6-rqkk8             1/1     Running     0             86m
+aap-deployment-eda-api-65d57bf6d8-wzgxm                           3/3     Running     0             86m
+aap-deployment-eda-default-worker-85b7857b96-72769                1/1     Running     0             86m
+aap-deployment-eda-default-worker-85b7857b96-mtnkx                1/1     Running     0             86m
+aap-deployment-eda-event-stream-c6fddcb86-4bvzs                   2/2     Running     0             86m
+aap-deployment-gateway-84d949d7db-lv7w5                           2/2     Running     0             90m
+aap-deployment-mcp-586f846585-x5p7z                               1/1     Running     0             83m
+aap-deployment-postgres-15-0                                      1/1     Running     0             91m
+aap-deployment-redis-0                                            1/1     Running     0             92m
+aap-gateway-operator-controller-manager-7b48b468f5-98ddx          1/1     Running     1 (60m ago)   111m
+ansible-lightspeed-operator-controller-manager-5d7676d756-2v5qd   1/1     Running     1 (60m ago)   111m
+automation-controller-operator-controller-manager-55fbd4dbrb7b6   1/1     Running     1 (60m ago)   111m
+automation-hub-operator-controller-manager-6869fc555-62tgq        1/1     Running     1 (60m ago)   111m
+automationmetricsservice-operator-controller-manager-768b6vw2lp   1/1     Running     1 (60m ago)   111m
+eda-server-operator-controller-manager-bc468cb6f-tnqtv            1/1     Running     1 (60m ago)   111m
+resource-operator-controller-manager-8d54dd4cf-mdwd8              1/1     Running     1 (60m ago)   111m
