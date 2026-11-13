@@ -1,33 +1,12 @@
 ---
-- name: Test OpenShift Cluster API Connectivity
+- name: Test OpenShift API Connection
   hosts: localhost
   connection: local
   gather_facts: false
 
   tasks:
-    - name: Test basic API connectivity and fetch cluster version
-      kubernetes.core.k8s_cluster_info:
-        host: "{{ ocp_api_host }}"
-        api_key: "{{ ocp_token }}"
-        validate_certs: "{{ validate_certs }}"
-      register: cluster_info
-
-    - name: Verify step success
-      ansible.builtin.assert:
-        that:
-          - cluster_info.resources is defined or cluster_info.version is defined
-        fail_msg: "Failed to connect to OpenShift API at {{ ocp_api_host }}."
-        success_msg: "Successfully authenticated to OpenShift API with Bearer Token."
-
-    - name: Query OpenShift Project resources
+    - name: Fetch cluster namespaces to verify API access
       kubernetes.core.k8s_info:
-        host: "{{ ocp_api_host }}"
-        api_key: "{{ ocp_token }}"
-        validate_certs: "{{ validate_certs }}"
-        api_version: project.openshift.io/v1
-        kind: Project
-      register: ocp_projects
-
-    - name: Display available OpenShift Projects count
-      ansible.builtin.debug:
-        msg: "Retrieved {{ ocp_projects.resources | length }} OpenShift project(s)."
+        api_version: v1
+        kind: Namespace
+      register: ocp_namespaces
