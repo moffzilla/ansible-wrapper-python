@@ -56,3 +56,10 @@ automation-hub-operator-controller-manager-6869fc555-62tgq        1/1     Runnin
 automationmetricsservice-operator-controller-manager-768b6vw2lp   1/1     Running     1 (60m ago)   111m
 eda-server-operator-controller-manager-bc468cb6f-tnqtv            1/1     Running     1 (60m ago)   111m
 resource-operator-controller-manager-8d54dd4cf-mdwd8              1/1     Running     1 (60m ago)   111m
+
+Watch container execution
+oc get pod -w | grep automation-job- 
+
+Execution Environment includes the kubernetes.core and OCP collection
+
+quay.io/jerrycorum/test-exec-environment_ee  1.2
