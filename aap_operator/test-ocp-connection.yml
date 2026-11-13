@@ -15,8 +15,3 @@
       ansible.builtin.debug:
         msg: "SUCCESS: Connected to the OpenShift API. Found {{ ocp_namespaces.resources | length }} namespaces."
 
-    - name: Display a sample of the namespaces
-      ansible.builtin.debug:
-        msg: >-
-          Sample namespaces: 
-          {{ ocp_namespaces.resources | map(attribute='metadata.name') | list | head(5) | join(', ') }}
