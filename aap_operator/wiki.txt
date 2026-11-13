@@ -62,4 +62,4 @@ oc get pod -w | grep automation-job-
 
 Execution Environment includes the kubernetes.core and OCP collection
 
-quay.io/jerrycorum/test-exec-environment_ee  1.2
+quay.io/jerrycorum/test-exec-environment_ee:1.2
