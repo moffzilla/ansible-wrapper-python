@@ -1,0 +1,20 @@
+---
+- name: Automate AAP Manifest Activation
+  hosts: localhost
+  connection: local
+  vars:
+    # Set these to match the OpenShift route and credentials you retrieved earlier
+    aap_host: "https://aap-deployment-aap.apps.cluster-qvsmw.dyn.redhatworkshops.io/"
+    aap_username: "admin"
+    aap_password: "IN6yzUx2lzpYdx2ANLmfbxCaajsIExJA"
+    manifest_path: "/home/lab-user/manifest_moffsible_20260408T135808Z.zip"
+    
+  tasks:
+    - name: Upload subscription manifest to AAP Controller
+      ansible.controller.license:
+    #  awx.awx.license:
+        controller_host: "{{ aap_host }}"
+        controller_username: "{{ aap_username }}"
+        controller_password: "{{ aap_password }}"
+        validate_certs: false # Set to true if you already applied custom trusted certificates
+        manifest: "{{ manifest_path }}"
