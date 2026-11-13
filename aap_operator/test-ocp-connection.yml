@@ -1,0 +1,22 @@
+---
+- name: Test OpenShift API Connection
+  hosts: localhost
+  connection: local
+  gather_facts: false
+
+  tasks:
+    - name: Fetch cluster namespaces to verify API access
+      kubernetes.core.k8s_info:
+        api_version: v1
+        kind: Namespace
+      register: ocp_namespaces
+
+    - name: Report connection success
+      ansible.builtin.debug:
+        msg: "SUCCESS: Connected to the OpenShift API. Found {{ ocp_namespaces.resources | length }} namespaces."
+
+    - name: Display a sample of the namespaces
+      ansible.builtin.debug:
+        msg: >-
+          Sample namespaces: 
+          {{ ocp_namespaces.resources | map(attribute='metadata.name') | list | head(5) | join(', ') }}
