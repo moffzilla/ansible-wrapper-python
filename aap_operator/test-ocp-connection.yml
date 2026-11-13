@@ -1,22 +1,33 @@
 ---
-- name: Test OpenShift API Connection
+- name: Test OpenShift Cluster API Connectivity
   hosts: localhost
   connection: local
   gather_facts: false
 
   tasks:
-    - name: Fetch cluster namespaces to verify API access
+    - name: Test basic API connectivity and fetch cluster version
+      kubernetes.core.k8s_cluster_info:
+        host: "{{ ocp_api_host }}"
+        api_key: "{{ ocp_token }}"
+        validate_certs: "{{ validate_certs }}"
+      register: cluster_info
+
+    - name: Verify step success
+      ansible.builtin.assert:
+        that:
+          - cluster_info.resources is defined or cluster_info.version is defined
+        fail_msg: "Failed to connect to OpenShift API at {{ ocp_api_host }}."
+        success_msg: "Successfully authenticated to OpenShift API with Bearer Token."
+
+    - name: Query OpenShift Project resources
       kubernetes.core.k8s_info:
-        api_version: v1
-        kind: Namespace
-      register: ocp_namespaces
+        host: "{{ ocp_api_host }}"
+        api_key: "{{ ocp_token }}"
+        validate_certs: "{{ validate_certs }}"
+        api_version: project.openshift.io/v1
+        kind: Project
+      register: ocp_projects
 
-    - name: Report connection success
+    - name: Display available OpenShift Projects count
       ansible.builtin.debug:
-        msg: "SUCCESS: Connected to the OpenShift API. Found {{ ocp_namespaces.resources | length }} namespaces."
-
-    - name: Display a sample of the namespaces
-      ansible.builtin.debug:
-        msg: >-
-          Sample namespaces: 
-          {{ ocp_namespaces.resources | map(attribute='metadata.name') | list | head(5) | join(', ') }}
+        msg: "Retrieved {{ ocp_projects.resources | length }} OpenShift project(s)."
