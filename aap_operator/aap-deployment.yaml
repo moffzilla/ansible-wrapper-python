@@ -1,0 +1,20 @@
+apiVersion: aap.ansible.com/v1alpha1
+kind: AnsibleAutomationPlatform
+metadata:
+  name: aap-deployment
+  namespace: aap 
+spec:
+  # Explicitly disable Automation Hub and Lightspeed
+  hub:
+    disabled: true
+  lightspeed:
+    disabled: true
+
+  # The operator will deploy Controller, EDA, MCP, and Gateway by default,
+  # but you can also explicitly define them as enabled:
+  controller:
+    disabled: false
+  eda:
+    disabled: false
+  mcp:
+    disabled: false
