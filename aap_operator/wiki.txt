@@ -67,8 +67,7 @@ oc get pod -w | grep automation-job-
 
 For the Remote OCP
 
-Execution Environment includes the kubernetes.core and OCP collection
-quay.io/jerrycorum/test-exec-environment_ee:1.2
+
 
 To configure Ansible Automation Platform to run a playbook against an external OpenShift Container Platform (OCP) cluster, you must provide the Controller with the external cluster's API endpoint and an authentication token.
 
@@ -76,7 +75,8 @@ In the Spoke OCP
 0.4 Obtain External Cluster Token
 
 In the Hub OCP
+3. Create a new project https://github.com/moffzilla/ansible-wrapper-python
+   Create Execution Environment includes the kubernetes.core and OCP collection quay.io/jerrycorum/test-exec-environment_ee:1.2
 1. Create the credentials: select OpenShift or Kubernetes API Bearer Token as the Credential Type, and paste in your API Endpoint URL and Token.
 2. Create a Container Group
-3. Create a new project https://github.com/moffzilla/ansible-wrapper-python
 4. Crate a job template and use test-ocp-connections.yml
