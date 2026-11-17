@@ -1,5 +1,8 @@
 [lab-user@bastion ~]$ pwd
 /home/lab-user
+
+git clone https://github.com/moffzilla/ansible-wrapper-python.git
+
 [lab-user@bastion ~]$ ls -lrt
 total 112
 -rw-r--r--. 1 lab-user users    459 Nov 13 16:02 aap-deployment.yaml
