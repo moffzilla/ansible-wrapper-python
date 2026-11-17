@@ -6,9 +6,9 @@ git clone https://github.com/moffzilla/ansible-wrapper-python.git
 [lab-user@bastion ~]$ ls -lrt
 total 112
 -rw-r--r--. 1 lab-user users    459 Nov 13 16:02 aap-deployment.yaml
--rw-r--r--. 1 lab-user users 104417 Nov 13 16:40 manifest_moffsible_20260408T135808Z.zip  --> Downloads/inventory-att   
+-rw-r--r--. 1 lab-user users 104417 Nov 13 16:40 manifest_moffsible_20260408T135808Z.zip  --> Downloads/inventory-att
 -rw-r--r--. 1 lab-user users    830 Nov 13 16:43 apply-manifest.yml
-[lab-user@bastion ~]$ 
+[lab-user@bastion ~]$
 
 VM
 oc login -u admin -p [Add credentials] https://api.cluster-xxxxx.xxx.redhatworkshops.io:6443
@@ -23,6 +23,7 @@ oc apply -f aap-deployment.yaml
 watch "oc get pods -n aap"
 oc get secret aap-deployment-admin-password -n aap -o jsonpath="{.data.password}" | base64 --decode; echo
 oc get route -n aap
+oc get pvc -n aap -o wide
 
 Manifest
 sudo dnf install ansible-core
@@ -61,7 +62,7 @@ eda-server-operator-controller-manager-bc468cb6f-tnqtv            1/1     Runnin
 resource-operator-controller-manager-8d54dd4cf-mdwd8              1/1     Running     1 (60m ago)   111m
 
 Watch container execution
-oc get pod -w | grep automation-job- 
+oc get pod -w | grep automation-job-
 
 For the Remote OCP
 
@@ -70,10 +71,10 @@ quay.io/jerrycorum/test-exec-environment_ee:1.2
 
 To configure Ansible Automation Platform to run a playbook against an external OpenShift Container Platform (OCP) cluster, you must provide the Controller with the external cluster's API endpoint and an authentication token.
 
-In the Spoke OCP 
+In the Spoke OCP
 0.4 Obtain External Cluster Token
 
-In the Hub OCP 
+In the Hub OCP
 1. Create the credentials: select OpenShift or Kubernetes API Bearer Token as the Credential Type, and paste in your API Endpoint URL and Token.
 2. Create a Container Group
 3. Create a new project https://github.com/moffzilla/ansible-wrapper-python
