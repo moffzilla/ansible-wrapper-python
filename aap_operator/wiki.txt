@@ -24,6 +24,7 @@ watch "oc get pods -n aap"
 oc get secret aap-deployment-admin-password -n aap -o jsonpath="{.data.password}" | base64 --decode; echo
 oc get route -n aap
 oc get pvc -n aap -o wide
+oc get pod aap-deployment-postgres-15-0 -n aap -o jsonpath='{range .spec.containers[*]}{.name}{"\n  Requests: "}{.resources.requests}{"\n  Limits:   "}{.resources.limits}{"\n"}{end}'
 
 Manifest
 sudo dnf install ansible-core
