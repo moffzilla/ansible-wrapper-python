@@ -1,0 +1,9 @@
+---
+eda_rulebook_activations:
+  - name: "Webhook Alert Receiver"
+    description: "Triggers automated remediation playbooks on incoming alerts"
+    project: "Enterprise Network Automation"
+    rulebook: "rulebooks/webhook_listener.yml"
+    decision_environment: "Default Decision Environment"
+    restart_policy: "always"
+    activation_status: true

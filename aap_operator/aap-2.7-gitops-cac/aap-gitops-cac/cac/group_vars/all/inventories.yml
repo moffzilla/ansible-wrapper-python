@@ -1,0 +1,6 @@
+---
+controller_inventories:
+  - name: "DC-01 Production Network Inventory"
+    description: "Static inventory managed via GitOps CaC"
+    organization: "Default"
+    kind: ""

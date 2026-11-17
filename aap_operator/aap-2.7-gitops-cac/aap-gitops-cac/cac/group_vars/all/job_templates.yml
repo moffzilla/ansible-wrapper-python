@@ -1,0 +1,12 @@
+---
+controller_job_templates:
+  - name: "Deploy Network Config - SROS"
+    description: "Applies network configuration using Nokia SROS collection"
+    job_type: "run"
+    organization: "Default"
+    project: "Enterprise Network Automation"
+    playbook: "playbooks/deploy-sros.yml"
+    inventory: "DC-01 Production Network Inventory"
+    execution_environment: "Default Execution Environment"
+    credentials:
+      - "GitHub Enterprise SCM Token"

@@ -1,0 +1,4 @@
+---
+aap_organizations:
+  - name: "Default"
+    description: "Default AAP Organization managed via CaC"

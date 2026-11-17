@@ -1,0 +1,30 @@
+apiVersion: automationplatform.ansible.com/v1beta1
+kind: AnsibleAutomationPlatform
+metadata:
+  name: enterprise-aap-deployment
+  namespace: ansible-automation-platform
+spec:
+  # Global or Platform Gateway Settings
+  extra_settings:
+    - setting: CSRF_TRUSTED_ORIGINS
+      value:
+        - https://aap.apps.your-cluster-domain.com
+
+  # 1. Automation Controller Configuration
+  controller:
+    enabled: true
+    replicas: 2
+    postgres_configuration_secret: aap-postgres-secret
+
+  # 2. Event-Driven Ansible (EDA) Configuration
+  eda:
+    enabled: true
+    replicas: 1
+
+  # 3. Model Context Protocol (MCP) Server Configuration
+  mcp:
+    enabled: true
+
+  # 4. Platform Gateway Settings
+  gateway:
+    enabled: true

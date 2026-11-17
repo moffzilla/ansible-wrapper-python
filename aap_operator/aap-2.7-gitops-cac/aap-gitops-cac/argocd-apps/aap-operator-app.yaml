@@ -1,0 +1,20 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: aap-2-7-stack
+  namespace: openshift-gitops
+spec:
+  destination:
+    namespace: ansible-automation-platform
+    server: https://kubernetes.default.svc
+  project: default
+  source:
+    path: infra
+    repoURL: https://github.com/your-org/aap-gitops-cac.git
+    targetRevision: HEAD
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+    syncOptions:
+      - CreateNamespace=true

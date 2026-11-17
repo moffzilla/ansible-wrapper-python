@@ -1,0 +1,25 @@
+---
+- name: Configure AAP 2.7 and EDA via Configuration as Code
+  hosts: localhost
+  connection: local
+  gather_facts: false
+
+  vars:
+    aap_hostname: "{{ lookup('env', 'AAP_HOSTNAME') }}"
+    aap_username: "{{ lookup('env', 'AAP_USERNAME') }}"
+    aap_password: "{{ lookup('env', 'AAP_PASSWORD') }}"
+    aap_validate_certs: false
+
+    # EDA Controller mapping variables
+    eda_host: "{{ lookup('env', 'AAP_HOSTNAME') }}"
+    eda_username: "{{ aap_username }}"
+    eda_password: "{{ aap_password }}"
+    eda_validate_certs: false
+
+  roles:
+    - infra.aap_configuration.gateway_organizations
+    - infra.aap_configuration.controller_credentials
+    - infra.aap_configuration.controller_projects
+    - infra.aap_configuration.controller_inventories
+    - infra.aap_configuration.controller_job_templates
+    - infra.aap_configuration.eda_rulebook_activations

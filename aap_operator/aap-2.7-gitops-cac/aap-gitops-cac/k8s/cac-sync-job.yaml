@@ -1,0 +1,41 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: aap-cac-project-sync
+  namespace: ansible-automation-platform
+  annotations:
+    argocd.argoproj.io/hook: PostSync
+    argocd.argoproj.io/hook-delete-policy: BeforeHookCreation
+spec:
+  template:
+    spec:
+      restartPolicy: Never
+      containers:
+        - name: ansible-cac-runner
+          image: registry.redhat.io/ansible-automation-platform-27/ee-supported-rhel9:latest
+          command:
+            - /bin/bash
+            - -c
+            - |
+              git clone https://github.com/your-org/aap-gitops-cac.git /tmp/cac
+              ansible-galaxy collection install infra.aap_configuration
+              cd /tmp/cac/cac
+              ansible-playbook configure-aap.yml
+          env:
+            - name: AAP_HOSTNAME
+              value: "https://aap-gateway.ansible-automation-platform.svc.cluster.local"
+            - name: AAP_USERNAME
+              valueFrom:
+                secretKeyRef:
+                  name: enterprise-aap-deployment-admin-password
+                  key: username
+            - name: AAP_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: enterprise-aap-deployment-admin-password
+                  key: password
+            - name: GIT_SCM_TOKEN
+              valueFrom:
+                secretKeyRef:
+                  name: git-scm-credentials
+                  key: token

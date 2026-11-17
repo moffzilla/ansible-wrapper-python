@@ -1,0 +1,12 @@
+---
+controller_projects:
+  - name: "Enterprise Network Automation"
+    description: "Managed via GitOps CaC"
+    organization: "Default"
+    scm_type: "git"
+    scm_url: "https://github.com/your-org/network-automation.git"
+    scm_branch: "main"
+    credential: "GitHub Enterprise SCM Token"
+    scm_update_on_launch: true
+    scm_delete_on_update: false
+    update_project: true
