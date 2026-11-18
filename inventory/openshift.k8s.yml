@@ -1,12 +1,28 @@
-plugin: kubernetes.core.k8s
-
-connections:
-  - namespaces:
+---
+- hosts: localhost
+  gather_facts: false
+  vars:
+    # Define the namespaces you want to target
+    target_namespaces:
       - aap
+  tasks:
+    - name: Get running pods from target namespaces
+      kubernetes.core.k8s_info:
+        api_version: v1
+        kind: Pod
+        namespace: "{{ item }}"
+        field_selectors:
+          - status.phase=Running
+      loop: "{{ target_namespaces }}"
+      register: pod_results
 
-keyed_groups:
-  - key: metadata.namespace
-    prefix: namespace
-
-compose:
-  ansible_host: status.podIP
+    - name: Add pods to dynamic inventory with namespace groups
+      ansible.builtin.add_host:
+        name: "{{ item.1.metadata.name }}"
+        groups:
+          - "namespace_{{ item.1.metadata.namespace }}"
+        ansible_host: "{{ item.1.status.podIP }}"
+        # Required if you plan to target pods using the kubectl connection plugin
+        ansible_kubectl_namespace: "{{ item.1.metadata.namespace }}"
+      loop: "{{ pod_results.results | subelements('resources') }}"
+      when: item.1.status.podIP is defined
