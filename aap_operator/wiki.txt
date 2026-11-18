@@ -63,11 +63,10 @@ eda-server-operator-controller-manager-bc468cb6f-tnqtv            1/1     Runnin
 resource-operator-controller-manager-8d54dd4cf-mdwd8              1/1     Running     1 (60m ago)   111m
 
 Watch container execution
-oc get pod -w | grep automation-job-
+oc get pod -w -n aap | grep automation-job-
+oc get pod -w -n ocp-automation-job | grep automation-job-
 
 For the Remote OCP
-
-
 
 To configure Ansible Automation Platform to run a playbook against an external OpenShift Container Platform (OCP) cluster, you must provide the Controller with the external cluster's API endpoint and an authentication token.
 
@@ -80,3 +79,5 @@ In the Hub OCP
 1. Create the credentials: select OpenShift or Kubernetes API Bearer Token as the Credential Type, and paste in your API Endpoint URL and Token.
 2. Create a Container Group
 4. Crate a job template and use test-ocp-connections.yml
+
+

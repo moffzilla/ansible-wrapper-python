@@ -1,0 +1,18 @@
+plugin: kubernetes.core.k8s
+
+# Overrides default cluster lookup
+namespaces:
+  - wnv7a0vbgw0013c
+
+# Exclude any Pod whose namespace is NOT in your allowed list
+exclude_filters:
+  - metadata.namespace not in ['wnv7a0vbgw0013c']
+
+# Group pods by namespace
+keyed_groups:
+  - key: metadata.namespace
+    prefix: namespace
+
+# Map pod IP address as the ansible_host target
+compose:
+  ansible_host: status.podIP
