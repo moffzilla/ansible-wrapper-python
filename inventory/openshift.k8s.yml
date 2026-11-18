@@ -2,7 +2,7 @@ plugin: kubernetes.core.k8s
 
 # Overrides default cluster lookup
 namespaces:
-  - wnv7a0vbgw0013c
+  - aap
 
 # Exclude any Pod whose namespace is NOT in your allowed list
 exclude_filters:
