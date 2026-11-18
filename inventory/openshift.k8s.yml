@@ -4,10 +4,6 @@ plugin: kubernetes.core.k8s
 namespaces:
   - aap
 
-# Exclude any Pod whose namespace is NOT in your allowed list
-exclude_filters:
-  - metadata.namespace not in ['wnv7a0vbgw0013c']
-
 # Group pods by namespace
 keyed_groups:
   - key: metadata.namespace
