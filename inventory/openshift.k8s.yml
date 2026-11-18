@@ -1,20 +1,12 @@
-- hosts: localhost
-  gather_facts: false
-  tasks:
-    - name: Get running pods from namespace aap
-      kubernetes.core.k8s_info:
-        api_version: v1
-        kind: Pod
-        namespace: aap
-        field_selectors:
-          - status.phase=Running
-      register: pod_results
+plugin: kubernetes.core.k8s
 
-    - name: Add pods to dynamic inventory
-      ansible.builtin.add_host:
-        name: "{{ item.metadata.name }}"
-        groups:
-          - namespace_{{ item.metadata.namespace }}
-        ansible_host: "{{ item.status.podIP }}"
-      loop: "{{ pod_results.resources }}"
-      when: item.status.podIP is defined
+connections:
+  - namespaces:
+      - aap
+
+keyed_groups:
+  - key: metadata.namespace
+    prefix: namespace
+
+compose:
+  ansible_host: status.podIP
