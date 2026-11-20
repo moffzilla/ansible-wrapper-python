@@ -17,6 +17,7 @@ oc get vmi -n aap-lab
 oc get svc -n aap-lab
 
 Operator Install
+oc get csv -n aap
 oc project aap
 vim aap-deployment.yaml
 oc apply -f aap-deployment.yaml
